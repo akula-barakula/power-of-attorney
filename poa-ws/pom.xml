@@ -15,7 +15,7 @@
     <version>${stub.version}</version>
 
     <properties>
-        <api.file>{$project.basedir}/src/main/resources/testdata/__files/static/swagger/apidef.yaml</api.file>
+        <api.file>${project.basedir}/src/main/resources/testdata/__files/static/swagger/apidef.yaml</api.file>
     </properties>
 
     <dependencies>
@@ -32,7 +32,8 @@
 
     <build>    
         <plugins>
-           <plugin>
+            <!-- issue with Java 11 -->
+<!--             <plugin>
                 <groupId>com.github.sylvainlaurent.maven</groupId>
                 <artifactId>swagger-validator-maven-plugin</artifactId>
 
@@ -52,7 +53,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
