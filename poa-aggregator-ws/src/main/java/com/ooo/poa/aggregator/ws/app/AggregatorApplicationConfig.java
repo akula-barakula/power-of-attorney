@@ -16,7 +16,6 @@ import com.ooo.poa.aggregator.service.PoaClient;
 import com.ooo.poa.aggregator.service.impl.AggregatorServiceImpl;
 import com.ooo.poa.aggregator.service.impl.PoaClientImpl;
 import com.ooo.poa.aggregator.ws.controller.AggregatorController;
-import com.ooo.poa.aggregator.ws.controller.ResponseBuilder;
 import com.ooo.poa.client.api.AccountApi;
 import com.ooo.poa.client.api.CreditCardApi;
 import com.ooo.poa.client.api.DebitCardApi;
@@ -55,11 +54,6 @@ public class AggregatorApplicationConfig {
 	public AggregatorService aggregatorService() {
 		return new AggregatorServiceImpl();
 	}
-
-    @Bean
-    public ResponseBuilder responseBuilder() {
-        return new ResponseBuilder();
-    }
 
     @Bean
     public AggregatorController aggregatorController() {

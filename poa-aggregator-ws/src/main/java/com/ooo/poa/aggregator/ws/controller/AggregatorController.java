@@ -14,15 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ooo.poa.aggregator.service.AggregatorService;
-import com.ooo.poa.aggregator.ws.api.PowerOfAttorneyAggr;
-import com.ooo.poa.aggregator.ws.api.AppStatusAggr;
+import com.ooo.poa.aggregator.ws.model.AppStatusAggr;
+import com.ooo.poa.aggregator.ws.model.PowerOfAttorneyAggr;
 
 @RestController
-@RequestMapping("aggregator")
+@RequestMapping("/aggregator")
 public class AggregatorController {
-
-	@Autowired
-	private ResponseBuilder responseBuilder;
 
 	@Autowired
 	private AggregatorService aggregatorService;
@@ -33,10 +30,12 @@ public class AggregatorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
 	@Valid
 	@ResponseBody
-	public ResponseEntity<AppStatusAggr> status() {
+	public ResponseEntity<AppStatusAggr> getStatus() {
 
+	    AppStatusAggr response = new AppStatusAggr();
 		String message = String.format("%s is running. Current timestamp is %s", getClass().getName(), new Date());
-		AppStatusAggr response = responseBuilder.buildAppStatus(message);
+
+		response.setMessage(message);
 
 		return ResponseEntity.ok(response);
 	}

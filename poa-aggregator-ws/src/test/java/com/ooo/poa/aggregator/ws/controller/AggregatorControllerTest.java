@@ -1,89 +1,75 @@
 package com.ooo.poa.aggregator.ws.controller;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.when;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 
+import java.util.Arrays;
+
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import io.restassured.http.ContentType;
+import com.ooo.poa.aggregator.service.AggregatorService;
+import com.ooo.poa.aggregator.ws.model.ModelTest;
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-public class AggregatorControllerTest {
+public class AggregatorControllerTest extends ModelTest {
 
 	@Configuration
-	public static class GameControllerTestConfig {
-
-
+	public static class AggregatorControllerTestConfig {
 
 	    @Bean
-	    public ResponseBuilder responseBuilder() {
-	        return new ResponseBuilder();
+	    public AggregatorService aggregatorService() {
+	        return Mockito.mock(AggregatorService.class);
 	    }
 
-	    @Bean
-	    public AggregatorController poaAggregatorController() {
-	        return new AggregatorController();
-	    }
+        @Bean
+        public AggregatorController poaAggregatorController() {
+            return new AggregatorController();
+        }
 	}
 
 
     @Autowired
     private AggregatorController controller;
 
+    @Autowired
+    private AggregatorService aggregatorService;
+
 
     @Before
     public void before() {
     	standaloneSetup(controller);
+
+    	Mockito.when(aggregatorService.getPowerOfAttorneys())
+    	        .thenReturn(Arrays.asList(newPoa("id")));
     }
 
 
     @Test
-	public void ping() {
+	public void getStatus() {
 
 		when().
-		        get("/ping").
+		        get("/aggregator/status").
 		then().
 		        statusCode(200).
-		        body("message", startsWith("ping for com.ooo.kalah.ws.controller.GameController is OK on"));
+		        body("message", startsWith("com.ooo.poa.aggregator.ws.controller.AggregatorController is running. Current timestamp is "));
 	}
 
     @Test
-	public void games() {
+	public void getPowerOfAttorneys() {
 
-    	given().
-                contentType(ContentType.JSON).
 		when().
-		        post("/games").
-		then().
-		        statusCode(201).
-		        body("id", equalTo("gameId")).
-		        body("url", equalTo("http://localhost/games/gameId"));
-	}
-
-    @Test
-	public void games_gameId_pits_pitId() {
-
-    	given().
-                contentType(ContentType.JSON).
-		when().
-		        put("/games/gameId/pits/1").
+		        get("/aggregator/power-of-attorneys").
 		then().
 		        statusCode(200).
-		        body("id", equalTo("gameId")).
-		        body("url", equalTo("http://localhost/games/gameId")).
-		        body("status.1", equalTo("1")).
-    	        body("status.2", equalTo("2")).
-    	        body("status.5", equalTo("5"));
+		        body("[0].id", equalTo("id"));
 	}
 }

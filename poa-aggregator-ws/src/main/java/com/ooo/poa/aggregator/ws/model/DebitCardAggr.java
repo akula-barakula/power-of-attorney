@@ -1,13 +1,15 @@
-package com.ooo.poa.aggregator.ws.api;
+package com.ooo.poa.aggregator.ws.model;
 
-public class CreditCardAggr {
+public class DebitCardAggr {
 
 	private String id;
 	private StatusAggr status;
 	private Integer cardNumber;
 	private Integer sequenceNumber;
 	private String cardHolder;
-	private Integer monhtlyLimit;
+	private LimitAggr atmLimit;
+	private LimitAggr posLimit;
+	private Boolean contactless;
 
 
 	public void setId(String id) {
@@ -50,11 +52,27 @@ public class CreditCardAggr {
 		return cardHolder;
 	}
 
-	public void setMonhtlyLimit(Integer monhtlyLimit) {
-		this.monhtlyLimit = monhtlyLimit;
+	public void setAtmLimit(LimitAggr atmLimit) {
+		this.atmLimit = atmLimit;
 	}
 
-	public Integer getMonhtlyLimit() {
-		return monhtlyLimit;
+	public LimitAggr getAtmLimit() {
+		return atmLimit;
+	}
+
+	public void setPosLimit(LimitAggr posLimit) {
+		this.posLimit = posLimit;
+	}
+
+	public LimitAggr getPosLimit() {
+		return posLimit;
+	}
+
+	public void setContactless(Boolean contactless) {
+		this.contactless = contactless;
+	}
+
+	public Boolean isContactless() {
+		return contactless;
 	}
 }

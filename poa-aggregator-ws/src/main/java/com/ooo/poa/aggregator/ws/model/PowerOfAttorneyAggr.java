@@ -1,4 +1,4 @@
-package com.ooo.poa.aggregator.ws.api;
+package com.ooo.poa.aggregator.ws.model;
 
 import java.util.List;
 

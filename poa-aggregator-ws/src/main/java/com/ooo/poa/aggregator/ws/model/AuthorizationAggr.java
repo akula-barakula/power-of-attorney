@@ -1,4 +1,4 @@
-package com.ooo.poa.aggregator.ws.api;
+package com.ooo.poa.aggregator.ws.model;
 
 public enum AuthorizationAggr {
 
