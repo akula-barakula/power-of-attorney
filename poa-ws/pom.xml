@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.ooo</groupId>
+		<artifactId>poa</artifactId>
+		<version>${poa.version}</version>
+	</parent>
+
+    <groupId>nl.rabobank.powerofattorney</groupId>
+    <artifactId>power-of-attorney-json-stub</artifactId>
+    <version>${stub.version}</version>
+
+    <properties>
+        <api.file>{$project.basedir}/src/main/resources/testdata/__files/static/swagger/apidef.yaml</api.file>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>    
+        <plugins>
+           <plugin>
+                <groupId>com.github.sylvainlaurent.maven</groupId>
+                <artifactId>swagger-validator-maven-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+
+                        <configuration>
+                            <includes>
+                                <include>${api.file}</include>
+                            </includes>
+                            <failOnErrors>true</failOnErrors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>nl.rabobank.powerofattorney.stub.JsonStub</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ooo</groupId>
+        <artifactId>poa</artifactId>
+        <version>${poa.version}</version>
+    </parent>
+
+    <artifactId>poa-ws-client</artifactId>
+
+    <properties>
+        <api.file>{$project.basedir}/../poa-ws/src/main/resources/testdata/__files/static/swagger/apidef.yaml</api.file>
+    </properties>
+
+	<dependencies>
+        <dependency>
+            <groupId>nl.rabobank.powerofattorney</groupId>
+            <artifactId>power-of-attorney-json-stub</artifactId>
+        </dependency>
+	
+	    <!-- TODO OOO move dependencies to parent POM > dependencyManagement > dependencies -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.2.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.2.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+			    <groupId>io.swagger</groupId>
+			    <artifactId>swagger-codegen-maven-plugin</artifactId>
+
+			    <executions>
+			        <execution>
+			            <goals>
+			                <goal>generate</goal>
+			            </goals>
+
+			            <configuration>
+			                <inputSpec>${api.file}</inputSpec>
+			                <language>java</language>
+			                <library>resttemplate</library>
+			                
+			                <modelPackage>com.ooo.poa.client.model</modelPackage>			                
+			                <apiPackage>com.ooo.poa.client.api</apiPackage>
+			                <invokerPackage>com.ooo.poa.client.invoker</invokerPackage>
+
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+
+			                <configOptions>
+			                   <dateLibrary>legacy</dateLibrary>
+			                </configOptions>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

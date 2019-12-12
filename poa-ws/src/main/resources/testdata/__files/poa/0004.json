@@ -1,0 +1,8 @@
+{
+  "id" :"{{request.path.[1]}}",
+  "grantor": "Super duper employee",
+  "grantee": "Super duper company",
+  "account" : "NL23RABO123123123",
+  "direction" : "GIVEN",
+  "authorizations": ["VIEW","PAYMENT"]
+}
