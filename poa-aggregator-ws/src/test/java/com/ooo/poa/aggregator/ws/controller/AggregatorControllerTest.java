@@ -31,6 +31,11 @@ public class AggregatorControllerTest extends ModelTest {
 	        return Mockito.mock(AggregatorService.class);
 	    }
 
+	    @Bean
+	    public AggregatorExceptionHandler exceptionHandler() {
+	        return new AggregatorExceptionHandler();
+	    }
+
         @Bean
         public AggregatorController poaAggregatorController() {
             return new AggregatorController();
