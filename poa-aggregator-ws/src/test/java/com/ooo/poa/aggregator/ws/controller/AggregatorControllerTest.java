@@ -50,7 +50,7 @@ public class AggregatorControllerTest extends ModelTest {
     	standaloneSetup(controller);
 
     	Mockito.when(aggregatorService.getPowerOfAttorneys(anyString()))
-    	        .thenReturn(Arrays.asList(newPoa("id")));
+    	        .thenReturn(Arrays.asList(newPoaAggr("id")));
     }
 
 
