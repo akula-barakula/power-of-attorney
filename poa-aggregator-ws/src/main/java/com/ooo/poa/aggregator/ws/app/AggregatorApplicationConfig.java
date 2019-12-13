@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ooo.poa.aggregator.service.AggregatorService;
 import com.ooo.poa.aggregator.service.PoaClient;
 import com.ooo.poa.aggregator.service.impl.AggregatorServiceImpl;
+import com.ooo.poa.aggregator.service.impl.DataAggregator;
+import com.ooo.poa.aggregator.service.impl.DataCollector;
 import com.ooo.poa.aggregator.service.impl.PoaClientImpl;
 import com.ooo.poa.aggregator.ws.controller.AggregatorController;
 import com.ooo.poa.client.api.AccountApi;
@@ -25,35 +27,45 @@ import com.ooo.poa.client.api.PowerOfAttorneyApi;
 @EnableWebMvc
 public class AggregatorApplicationConfig {
 
-	@Bean
-	public PowerOfAttorneyApi powerOfAttorneyApi() {
-		return new PowerOfAttorneyApi();
-	}
+    @Bean
+    public PowerOfAttorneyApi powerOfAttorneyApi() {
+        return new PowerOfAttorneyApi();
+    }
 
-	@Bean
-	public AccountApi accountApi() {
-		return new AccountApi();
-	}
+    @Bean
+    public AccountApi accountApi() {
+        return new AccountApi();
+    }
 
-	@Bean
-	public CreditCardApi creditCardApi() {
-		return new CreditCardApi();
-	}
+    @Bean
+    public CreditCardApi creditCardApi() {
+        return new CreditCardApi();
+    }
 
-	@Bean
-	public DebitCardApi debitCardApi() {
-		return new DebitCardApi();
-	}
+    @Bean
+    public DebitCardApi debitCardApi() {
+        return new DebitCardApi();
+    }
 
-	@Bean
-	public PoaClient poaClient() {
-		return new PoaClientImpl();
-	}
+    @Bean
+    public PoaClient poaClient() {
+        return new PoaClientImpl();
+    }
 
-	@Bean
-	public AggregatorService aggregatorService() {
-		return new AggregatorServiceImpl();
-	}
+    @Bean
+    public DataCollector dataCollector() {
+        return new DataCollector();
+    }
+
+    @Bean
+    public DataAggregator dataAggregator() {
+        return new DataAggregator();
+    }
+
+    @Bean
+    public AggregatorService aggregatorService() {
+        return new AggregatorServiceImpl();
+    }
 
     @Bean
     public AggregatorController aggregatorController() {
@@ -61,34 +73,34 @@ public class AggregatorApplicationConfig {
     }
 
 
-	@Configuration
-	public static class AggregatorMvcConfigurer implements WebMvcConfigurer {
+    @Configuration
+    public static class AggregatorMvcConfigurer implements WebMvcConfigurer {
 
-		@Override
-		public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        @Override
+        public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 
-			MappingJackson2HttpMessageConverter converter = findJacksonConverter(converters);
-			if (converter == null) {
-				converter = new MappingJackson2HttpMessageConverter();
+            MappingJackson2HttpMessageConverter converter = findJacksonConverter(converters);
+            if (converter == null) {
+                converter = new MappingJackson2HttpMessageConverter();
 
-				converters.add(0, converter);
-			}
+                converters.add(0, converter);
+            }
 
-			adjustObjectMapper(converter.getObjectMapper());
-		}
+            adjustObjectMapper(converter.getObjectMapper());
+        }
 
-		private MappingJackson2HttpMessageConverter findJacksonConverter(List<HttpMessageConverter<?>> converters) {
+        private MappingJackson2HttpMessageConverter findJacksonConverter(List<HttpMessageConverter<?>> converters) {
 
-			return (MappingJackson2HttpMessageConverter) converters
-					.stream()
-					.filter(converter -> converter instanceof MappingJackson2HttpMessageConverter)
-					.findFirst()
-					.orElse(null);
-		}
+            return (MappingJackson2HttpMessageConverter) converters
+                    .stream()
+                    .filter(converter -> converter instanceof MappingJackson2HttpMessageConverter)
+                    .findFirst()
+                    .orElse(null);
+        }
 
-		private void adjustObjectMapper(ObjectMapper objectMapper) {
+        private void adjustObjectMapper(ObjectMapper objectMapper) {
 
-			objectMapper.setSerializationInclusion(Include.NON_EMPTY);
-		}
-	}
+            objectMapper.setSerializationInclusion(Include.NON_EMPTY);
+        }
+    }
 }
