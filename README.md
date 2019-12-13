@@ -13,7 +13,7 @@ This WS provides REST API for accessing aggregated power of attorney information
 
 **Get aggregated power of attorneys:**
   - do HTTP GET request to http://localhost:8082/aggregator/power-of-attorneys?user=Super%20duper%20employee
-  - value of user query param has to match grantor or grantee from one of power of attorneys.
+  - value of "user" query param has to match grantor or grantee from one of power of attorneys.
 
 **SOAP UI project:**
   there is SOAP UI project available in poa-aggregator-ws/src/test/resources/POA-soapui-project.xml
