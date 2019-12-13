@@ -18,8 +18,8 @@ paths:
     get:
       tags:
       - "Power of Attorney"
-      summary: "Get all power of attorneys"
-      description: "Provides list of power of attorneys for current user"
+      summary: "Get ids of all power of attorneys"
+      description: "Provides list of ids of power of attorneys for current user"
       operationId: "getAllPowerOfAttorneyReferences"
       produces:
       - "application/json"

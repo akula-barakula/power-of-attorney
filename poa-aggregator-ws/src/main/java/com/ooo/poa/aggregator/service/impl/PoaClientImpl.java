@@ -59,6 +59,7 @@ public class PoaClientImpl implements PoaClient {
 		return call(() -> debitCardApi.getDebitCardDetailWithHttpInfo(cardId));
 	}
 
+	// TODO OOO handle more exceptions and error cases
 	private <T> T call(Supplier<ResponseEntity<T>> supplier) {
 
 	    try {

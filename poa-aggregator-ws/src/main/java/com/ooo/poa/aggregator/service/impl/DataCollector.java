@@ -51,11 +51,19 @@ public class DataCollector {
             CollectedData collectedData) {
 
         PowerOfAttorney powerOfAttorney = poaClient.getPowerOfAttorney(poaReference.getId());
+        /*
+         * we have requirement: Only show data that a user is actually authorized for
+         *     that is why if user does not have VIEW authorization then poa will not be shown
+         */
         if (!isAuthorizedFor(user, powerOfAttorney)) {
             return;
         }
 
         Account account = getAccount(powerOfAttorney, collectedData);
+        /*
+         * we have requirement: Don't return inactive products or accounts
+         *     that is why poa for ended account will not be shown
+         */
         if (!isActive(account)) {
             return;
         }
@@ -98,12 +106,12 @@ public class DataCollector {
         return result;
     }
 
+    /**
+     * ended - when account was ended/closed:
+     *         == null - was not closed yet
+     *         != null - is already closed
+     */
     private boolean isActive(Account account) {
-        /*
-         * ended - when account was ended/closed:
-         *         == null - was not closed yet
-         *         != null - is already closed
-         */
         return account.getEnded() == null;
     }
 
@@ -145,6 +153,14 @@ public class DataCollector {
         }
     }
 
+    /**
+     * we have requirement: Only show data that a user is actually authorized for
+     *     that is why if user does not have authorization for CREDIT_CARD/DEBIT_CARD
+     *     then they will not be shown
+     *
+     * we have requirement: Don't return inactive products or accounts
+     *     that is why blocked cards will not be shown
+     */
     private boolean collectCreditCardData(
             boolean showCreditCards,
             String cardId,
@@ -171,6 +187,14 @@ public class DataCollector {
         return false;
     }
 
+    /**
+     * we have requirement: Only show data that a user is actually authorized for
+     *     that is why if user does not have authorization for CREDIT_CARD/DEBIT_CARD
+     *     then they will not be shown
+     *
+     * we have requirement: Don't return inactive products or accounts
+     *     that is why blocked cards will not be shown
+     */
     private boolean collectDebitCardData(
             boolean showDebitCards,
             String cardId,

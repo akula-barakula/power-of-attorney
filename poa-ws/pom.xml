@@ -37,7 +37,7 @@
 
     <build>    
         <plugins>
-            <!-- issue with Java 11 -->
+            <!-- TODO OOO swagger-validator-maven-plugin has issue with Java 11 => find replacement -->
 <!--             <plugin>
                 <groupId>com.github.sylvainlaurent.maven</groupId>
                 <artifactId>swagger-validator-maven-plugin</artifactId>
