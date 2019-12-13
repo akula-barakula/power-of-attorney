@@ -7,6 +7,8 @@ import com.ooo.poa.client.model.CardType;
 import com.ooo.poa.client.model.CreditCard;
 import com.ooo.poa.client.model.DebitCard;
 import com.ooo.poa.client.model.Direction;
+import com.ooo.poa.client.model.Limit;
+import com.ooo.poa.client.model.PeriodUnit;
 import com.ooo.poa.client.model.PowerOfAttorney;
 import com.ooo.poa.client.model.PowerOfAttorneyReference;
 import com.ooo.poa.client.model.Status;
@@ -58,6 +60,14 @@ public abstract class ModelTest {
         return new DebitCard()
                 .id(id)
                 .status(Status.ACTIVE);
+    }
+
+    public Limit newLimit(
+            Integer limit,
+            PeriodUnit periodUnit) {
+        return new Limit()
+                .limit(limit)
+                .periodUnit(periodUnit);
     }
 
 

@@ -1,8 +1,21 @@
 package com.ooo.poa.aggregator.service.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ooo.poa.aggregator.service.PoaClient;
 import com.ooo.poa.aggregator.service.impl.DataCollector.CollectedData;
@@ -13,19 +26,7 @@ import com.ooo.poa.client.model.CardType;
 import com.ooo.poa.client.model.CreditCard;
 import com.ooo.poa.client.model.DebitCard;
 import com.ooo.poa.client.model.PowerOfAttorney;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import com.ooo.poa.client.model.Status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class DataCollectorTest extends ModelTest {
@@ -120,6 +121,22 @@ public class DataCollectorTest extends ModelTest {
     }
 
     @Test
+    public void collectFor_noViewAuthorizationForGrantee() {
+        PowerOfAttorney newPoa = newPoa("poa1", "tor", "tee", "NL00RABOacc1")
+                .authorizations(Arrays.asList(Authorization.PAYMENT, Authorization.CREDIT_CARD, Authorization.DEBIT_CARD))
+                .addCardsItem(newCardReference("credit1", CardType.CREDIT_CARD))
+                .addCardsItem(newCardReference("debit1", CardType.DEBIT_CARD));
+        when(poaClient.getPowerOfAttorney("ref1"))
+                .thenReturn(newPoa);
+
+        CollectedData data = dataCollector.collectFor("tee");
+        assertEquals(0, data.getPowerOfAttorneys().size());
+        assertEquals(0, data.getAccounts().size());
+        assertEquals(0, data.getCreditCards().size());
+        assertEquals(0, data.getDebitCards().size());
+    }
+
+    @Test
     public void collectFor_accountIsEnded() {
         when(poaClient.getAccount("acc1"))
                 .thenReturn(newAccount("acc1").ended("11-11-1111"));
@@ -166,6 +183,48 @@ public class DataCollectorTest extends ModelTest {
                 .addCardsItem(newCardReference("debit1", CardType.DEBIT_CARD));
         when(poaClient.getPowerOfAttorney("ref1"))
                 .thenReturn(newPoa);
+
+
+        CollectedData data = dataCollector.collectFor("tor");
+        List<PowerOfAttorney> poas = data.getPowerOfAttorneys();
+        Map<String, Account> accounts = data.getAccounts();
+        Map<String, CreditCard> creditCards = data.getCreditCards();
+        Map<String, DebitCard> debitCards = data.getDebitCards();
+        assertEquals(1, poas.size());
+        assertEquals(1, accounts.size());
+        assertEquals(1, creditCards.size());
+        assertEquals(0, debitCards.size());
+
+        assertEquals("poa1", poas.get(0).getId());
+        assertEquals("acc1", accounts.get("NL00RABOacc1").getNumber());
+        assertEquals("credit1", creditCards.get("credit1").getId());
+    }
+
+    @Test
+    public void collectFor_blockedCreditCard() {
+        when(poaClient.getCreditCard("credit1"))
+                .thenReturn(newCreditCard("credit1").status(Status.BLOCKED));
+
+
+        CollectedData data = dataCollector.collectFor("tor");
+        List<PowerOfAttorney> poas = data.getPowerOfAttorneys();
+        Map<String, Account> accounts = data.getAccounts();
+        Map<String, CreditCard> creditCards = data.getCreditCards();
+        Map<String, DebitCard> debitCards = data.getDebitCards();
+        assertEquals(1, poas.size());
+        assertEquals(1, accounts.size());
+        assertEquals(0, creditCards.size());
+        assertEquals(1, debitCards.size());
+
+        assertEquals("poa1", poas.get(0).getId());
+        assertEquals("acc1", accounts.get("NL00RABOacc1").getNumber());
+        assertEquals("debit1", debitCards.get("debit1").getId());
+    }
+
+    @Test
+    public void collectFor_blockedDebitCard() {
+        when(poaClient.getDebitCard("debit1"))
+                .thenReturn(newDebitCard("debit1").status(Status.BLOCKED));
 
 
         CollectedData data = dataCollector.collectFor("tor");

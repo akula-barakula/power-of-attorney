@@ -254,53 +254,44 @@ public class DataCollector {
         }
 
         public boolean containsAccount(String accountIban) {
-
             return accounts.containsKey(accountIban);
         }
 
         public Account getAccount(String accountIban) {
-
             return accounts.get(accountIban);
         }
 
         public void addAccount(
                 String accountIban,
                 Account account) {
-
             accounts.put(accountIban, account);
         }
 
         public boolean containsCreditCard(String cardId) {
-
             return creditCards.containsKey(cardId);
         }
 
         public void addCreditCard(
                 String cardId,
                 CreditCard card) {
-
             creditCards.put(cardId, card);
         }
 
         public boolean containsDebitCard(String cardId) {
-
             return debitCards.containsKey(cardId);
         }
 
         public void addDebitCard(
                 String cardId,
                 DebitCard card) {
-
             debitCards.put(cardId, card);
         }
 
         public boolean containsBlockedCard(String cardId) {
-
             return blockedCards.contains(cardId);
         }
 
         public void addBlockedCard(String cardId) {
-
             blockedCards.add(cardId);
         }
     }

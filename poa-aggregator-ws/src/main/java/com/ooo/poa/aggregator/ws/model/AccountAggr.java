@@ -5,6 +5,7 @@ public class AccountAggr {
 	private String number;
 	private String iban;
 	private String owner;
+
 	private Integer balance;
 	private String created;
 	private String ended;

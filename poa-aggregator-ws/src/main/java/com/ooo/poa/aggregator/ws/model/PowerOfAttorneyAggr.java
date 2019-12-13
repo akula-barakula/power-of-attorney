@@ -6,10 +6,11 @@ public class PowerOfAttorneyAggr {
 
 	private String id;
 	private String grantor;
-	private String grantee;
-	private AccountAggr account;
 	private DirectionAggr direction;
+	private String grantee;
+
 	private List<AuthorizationAggr> authorizations;
+	private AccountAggr account;
 	private List<CreditCardAggr> creditCards;
 	private List<DebitCardAggr> debitCards;
 
@@ -30,6 +31,14 @@ public class PowerOfAttorneyAggr {
 		return grantor;
 	}
 
+	public void setDirection(DirectionAggr direction) {
+	    this.direction = direction;
+	}
+
+	public DirectionAggr getDirection() {
+	    return direction;
+	}
+
 	public void setGrantee(String grantee) {
 		this.grantee = grantee;
 	}
@@ -38,28 +47,20 @@ public class PowerOfAttorneyAggr {
 		return grantee;
 	}
 
+	public void setAuthorizations(List<AuthorizationAggr> authorizations) {
+	    this.authorizations = authorizations;
+	}
+
+	public List<AuthorizationAggr> getAuthorizations() {
+	    return authorizations;
+	}
+
 	public void setAccount(AccountAggr account) {
 		this.account = account;
 	}
 
 	public AccountAggr getAccount() {
 		return account;
-	}
-
-	public void setDirection(DirectionAggr direction) {
-		this.direction = direction;
-	}
-
-	public DirectionAggr getDirection() {
-		return direction;
-	}
-
-	public void setAuthorizations(List<AuthorizationAggr> authorizations) {
-		this.authorizations = authorizations;
-	}
-
-	public List<AuthorizationAggr> getAuthorizations() {
-		return authorizations;
 	}
 
 	public void setCreditCards(List<CreditCardAggr> creditCards) {

@@ -3,10 +3,11 @@ package com.ooo.poa.aggregator.ws.model;
 public class DebitCardAggr {
 
 	private String id;
-	private StatusAggr status;
 	private Integer cardNumber;
 	private Integer sequenceNumber;
 	private String cardHolder;
+
+	private StatusAggr status;
 	private LimitAggr atmLimit;
 	private LimitAggr posLimit;
 	private Boolean contactless;
@@ -18,14 +19,6 @@ public class DebitCardAggr {
 
 	public String getId() {
 		return id;
-	}
-
-	public void setStatus(StatusAggr status) {
-		this.status = status;
-	}
-
-	public StatusAggr getStatus() {
-		return status;
 	}
 
 	public void setCardNumber(Integer cardNumber) {
@@ -51,6 +44,14 @@ public class DebitCardAggr {
 	public String getCardHolder() {
 		return cardHolder;
 	}
+
+    public void setStatus(StatusAggr status) {
+        this.status = status;
+    }
+
+    public StatusAggr getStatus() {
+        return status;
+    }
 
 	public void setAtmLimit(LimitAggr atmLimit) {
 		this.atmLimit = atmLimit;
