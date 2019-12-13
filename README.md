@@ -8,7 +8,9 @@ This WS provides REST API for accessing aggregated power of attorney information
   - and run nl.rabobank.powerofattorney.stub.JsonStub + com.ooo.poa.aggregator.ws.app.AggregatorApplication.
 
 **Power of Attorney app runs on:** http://localhost:8080
+
 **Aggregator app runs on:** http://localhost:8082
+
 **Get aggregated power of attorneys:**
   - do HTTP GET request to http://localhost:8082/aggregator/power-of-attorneys?user=Super%20duper%20employee
   - value of user query param has to match grantor or grantee from one of power of attorneys.
