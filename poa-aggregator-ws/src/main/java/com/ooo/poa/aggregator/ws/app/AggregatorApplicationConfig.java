@@ -18,6 +18,7 @@ import com.ooo.poa.aggregator.service.impl.DataAggregator;
 import com.ooo.poa.aggregator.service.impl.DataCollector;
 import com.ooo.poa.aggregator.service.impl.PoaClientImpl;
 import com.ooo.poa.aggregator.ws.controller.AggregatorController;
+import com.ooo.poa.aggregator.ws.controller.AggregatorExceptionHandler;
 import com.ooo.poa.client.api.AccountApi;
 import com.ooo.poa.client.api.CreditCardApi;
 import com.ooo.poa.client.api.DebitCardApi;
@@ -65,6 +66,11 @@ public class AggregatorApplicationConfig {
     @Bean
     public AggregatorService aggregatorService() {
         return new AggregatorServiceImpl();
+    }
+
+    @Bean
+    AggregatorExceptionHandler exceptionHandler() {
+    	return new AggregatorExceptionHandler();
     }
 
     @Bean
