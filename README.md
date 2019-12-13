@@ -12,7 +12,7 @@ This WS provides REST API for accessing aggregated power of attorney information
 **Aggregator app runs on:** http://localhost:8082
 
 **Get aggregated power of attorneys:**
-  - do HTTP GET request to http://localhost:8082/aggregator/power-of-attorneys?user=Super%20duper%20employee
+  - send HTTP GET request to http://localhost:8082/aggregator/power-of-attorneys?user=Super%20duper%20employee
   - value of "user" query param has to match grantor or grantee from one of power of attorneys.
 
 **SOAP UI project:**
@@ -30,8 +30,7 @@ This WS provides REST API for accessing aggregated power of attorney information
   - added definitions/Account to apidef.yaml as it was missing;
   - added "status" field to apidef.yaml -> definitions/DebitCard and apidef.yaml -> definitions/CreditCard as it was missing;
   - added definitions/Status to apidef.yaml as it was missing.
- 
+
 # TODO
-  - finish unit tests;
   - handle more exceptions and error cases;
   - add HTTPS.
