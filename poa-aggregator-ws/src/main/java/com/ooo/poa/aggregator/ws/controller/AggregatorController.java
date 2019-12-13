@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,9 +46,9 @@ public class AggregatorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
 	@Valid
 	@ResponseBody
-	public ResponseEntity<List<PowerOfAttorneyAggr>> getPowerOfAttorneys() {
+	public ResponseEntity<List<PowerOfAttorneyAggr>> getPowerOfAttorneys(@RequestParam String user) {
 
-		List<PowerOfAttorneyAggr> response = aggregatorService.getPowerOfAttorneys();
+		List<PowerOfAttorneyAggr> response = aggregatorService.getPowerOfAttorneys(user);
 
 		return ResponseEntity.ok(response);
 	}

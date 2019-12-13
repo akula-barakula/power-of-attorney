@@ -4,6 +4,7 @@ import static io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.when;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.mockito.ArgumentMatchers.anyString;
 
 import java.util.Arrays;
 
@@ -48,7 +49,7 @@ public class AggregatorControllerTest extends ModelTest {
     public void before() {
     	standaloneSetup(controller);
 
-    	Mockito.when(aggregatorService.getPowerOfAttorneys())
+    	Mockito.when(aggregatorService.getPowerOfAttorneys(anyString()))
     	        .thenReturn(Arrays.asList(newPoa("id")));
     }
 
@@ -67,7 +68,7 @@ public class AggregatorControllerTest extends ModelTest {
 	public void getPowerOfAttorneys() {
 
 		when().
-		        get("/aggregator/power-of-attorneys").
+		        get("/aggregator/power-of-attorneys?user=name").
 		then().
 		        statusCode(200).
 		        body("[0].id", equalTo("id"));

@@ -161,8 +161,10 @@ definitions:
         type: "integer"
       created:
         type: "string"
+        pattern: '\d{2}-\d{2}-\d{4}'
       ended:
         type: "string"
+        pattern: '\d{2}-\d{2}-\d{4}'
   DebitCard:
     type: "object"
     properties:

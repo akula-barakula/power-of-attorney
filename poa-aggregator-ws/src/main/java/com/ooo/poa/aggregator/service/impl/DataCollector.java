@@ -2,8 +2,10 @@ package com.ooo.poa.aggregator.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -16,88 +18,194 @@ import com.ooo.poa.client.model.CardReference;
 import com.ooo.poa.client.model.CardType;
 import com.ooo.poa.client.model.CreditCard;
 import com.ooo.poa.client.model.DebitCard;
+import com.ooo.poa.client.model.Direction;
 import com.ooo.poa.client.model.PowerOfAttorney;
 import com.ooo.poa.client.model.PowerOfAttorneyReference;
+import com.ooo.poa.client.model.Status;
 
+/**
+ *
+ * Collects and filters data.
+ *
+ */
 public class DataCollector {
 
     @Autowired
     private PoaClient poaClient;
 
 
-    public CollectedData collect() {
+    public CollectedData collectFor(String user) {
 
-        List<PowerOfAttorneyReference> poaIds = poaClient.getAllPowerOfAttorneyReferences();
+        CollectedData result = new CollectedData();
 
-        List<PowerOfAttorney> powerOfAttorneys = new ArrayList<>();
-        for (PowerOfAttorneyReference poaId : poaIds) {
-            PowerOfAttorney poa = poaClient.getPowerOfAttorney(poaId.getId());
-
-            powerOfAttorneys.add(poa);
+        for (PowerOfAttorneyReference poaReference : poaClient.getAllPowerOfAttorneyReferences()) {
+            collectFor(user, poaReference, result);
         }
 
-        Map<String, Account> accounts = new HashMap<>();
-        Map<String, CreditCard> creditCards = new HashMap<>();
-        Map<String, DebitCard> debitCards = new HashMap<>();
-        for (PowerOfAttorney poa : powerOfAttorneys) {
-            String accountIban = poa.getAccount();
+        return result;
+    }
 
-            Account account = poaClient.getAccount(Utils.toAccountNumber(accountIban));
-            accounts.put(accountIban, account);
+    private void collectFor(
+            String user,
+            PowerOfAttorneyReference poaReference,
+            CollectedData collectedData) {
 
-            List<Authorization> authorizations = poa.getAuthorizations();
-            boolean canAccessCreditCard = authorizations.contains(Authorization.CREDIT_CARD);
-            boolean canAccessDebitCard = authorizations.contains(Authorization.DEBIT_CARD);
+        PowerOfAttorney powerOfAttorney = poaClient.getPowerOfAttorney(poaReference.getId());
+        if (!isAuthorizedFor(user, powerOfAttorney)) {
+            return;
+        }
 
-            if (CollectionUtils.isEmpty(poa.getCards())) {
-                continue;
-            }
+        Account account = getAccount(powerOfAttorney, collectedData);
+        if (!isActive(account)) {
+            return;
+        }
 
-            for (CardReference cardReference : poa.getCards()) {
-                String cardId = cardReference.getId();
+        collectedData.addPowerOfAttorney(powerOfAttorney);
+        collectCardDataFrom(powerOfAttorney, collectedData);
+    }
 
-                if (cardReference.getType() == CardType.CREDIT_CARD) {
-                    if (canAccessCreditCard
-                            && !creditCards.containsKey(cardId)) {
-                        CreditCard card = poaClient.getCreditCard(cardId);
+    private boolean isAuthorizedFor(
+            String user,
+            PowerOfAttorney powerOfAttorney) {
 
-                        creditCards.put(cardId, card);
-                    }
+        Direction direction = powerOfAttorney.getDirection();
+        String from = (direction == Direction.GIVEN) ? powerOfAttorney.getGrantor() : powerOfAttorney.getGrantee();
 
-                } else if (cardReference.getType() == CardType.DEBIT_CARD) {
-                    if (canAccessDebitCard
-                            && !debitCards.containsKey(cardId)) {
-                        DebitCard card = poaClient.getDebitCard(cardId);
+        if (user.equalsIgnoreCase(from)) {
+            return true;
+        }
 
-                        debitCards.put(cardId, card);
-                    }
-                }
+        String to = (direction == Direction.GIVEN) ? powerOfAttorney.getGrantee() : powerOfAttorney.getGrantor();
+
+        return user.equalsIgnoreCase(to)
+                && powerOfAttorney.getAuthorizations().contains(Authorization.VIEW);
+    }
+
+    private Account getAccount(
+            PowerOfAttorney powerOfAttorney,
+            CollectedData collectedData) {
+
+        String accountIban = powerOfAttorney.getAccount();
+        if (collectedData.containsAccount(accountIban)) {
+            return collectedData.getAccount(accountIban);
+        }
+
+        String accountNumber = Utils.toAccountNumber(accountIban);
+        Account result = poaClient.getAccount(accountNumber);
+
+        collectedData.addAccount(accountIban, result);
+
+        return result;
+    }
+
+    private boolean isActive(Account account) {
+        /*
+         * ended - when account was ended/closed:
+         *         == null - was not closed yet
+         *         != null - is already closed
+         */
+        return account.getEnded() == null;
+    }
+
+    private void collectCardDataFrom(
+            PowerOfAttorney powerOfAttorney,
+            CollectedData collectedData) {
+
+        if (CollectionUtils.isEmpty(powerOfAttorney.getCards())) {
+            return;
+        }
+
+        List<Authorization> authorizations = powerOfAttorney.getAuthorizations();
+        boolean showCreditCards = authorizations.contains(Authorization.CREDIT_CARD);
+        boolean showDebitCards = authorizations.contains(Authorization.DEBIT_CARD);
+        List<CardReference> cardsToHide = new ArrayList<>();
+
+        for (CardReference cardReference : powerOfAttorney.getCards()) {
+            boolean hideCard = collectCardData(cardReference, showCreditCards, showDebitCards, collectedData);
+
+            if (hideCard) {
+                cardsToHide.add(cardReference);
             }
         }
 
-        return new CollectedData(powerOfAttorneys, accounts, creditCards, debitCards);
+        powerOfAttorney.getCards().removeAll(cardsToHide);
+    }
+
+    private boolean collectCardData(
+            CardReference cardReference,
+            boolean showCreditCards,
+            boolean showDebitCards,
+            CollectedData collectedData) {
+
+        if (cardReference.getType() == CardType.CREDIT_CARD) {
+            return collectCreditCardData(showCreditCards, cardReference.getId(), collectedData);
+
+        } else {
+            return collectDebitCardData(showDebitCards, cardReference.getId(), collectedData);
+        }
+    }
+
+    private boolean collectCreditCardData(
+            boolean showCreditCards,
+            String cardId,
+            CollectedData collectedData) {
+
+        if (!showCreditCards
+                || collectedData.containsBlockedCard(cardId)) {
+            return true;
+
+        } else if (collectedData.containsCreditCard(cardId)) {
+            return false;
+        }
+
+        CreditCard card = poaClient.getCreditCard(cardId);
+
+        if (card.getStatus() == Status.BLOCKED) {
+            collectedData.addBlockedCard(cardId);
+
+            return true;
+        }
+
+        collectedData.addCreditCard(cardId, card);
+
+        return false;
+    }
+
+    private boolean collectDebitCardData(
+            boolean showDebitCards,
+            String cardId,
+            CollectedData collectedData) {
+
+        if (!showDebitCards
+                || collectedData.containsBlockedCard(cardId)) {
+            return true;
+
+        } else if (collectedData.containsDebitCard(cardId)) {
+            return false;
+        }
+
+        DebitCard card = poaClient.getDebitCard(cardId);
+
+        if (card.getStatus() == Status.BLOCKED) {
+            collectedData.addBlockedCard(cardId);
+
+            return true;
+        }
+
+        collectedData.addDebitCard(cardId, card);
+
+        return false;
     }
 
 
     public static class CollectedData {
 
-        private final List<PowerOfAttorney> powerOfAttorneys;
-        private final Map<String, Account> accounts;
-        private final Map<String, CreditCard> creditCards;
-        private final Map<String, DebitCard> debitCards;
+        private final List<PowerOfAttorney> powerOfAttorneys = new ArrayList<>();
+        private final Map<String, Account> accounts = new HashMap<>();
 
-
-        public CollectedData(
-                List<PowerOfAttorney> powerOfAttorneys,
-                Map<String, Account> accounts,
-                Map<String, CreditCard> creditCards,
-                Map<String, DebitCard> debitCards) {
-
-            this.powerOfAttorneys = powerOfAttorneys;
-            this.accounts = accounts;
-            this.creditCards = creditCards;
-            this.debitCards = debitCards;
-        }
+        private final Map<String, CreditCard> creditCards = new HashMap<>();
+        private final Map<String, DebitCard> debitCards = new HashMap<>();
+        private final Set<String> blockedCards = new HashSet<>();
 
 
         public List<PowerOfAttorney> getPowerOfAttorneys() {
@@ -114,6 +222,62 @@ public class DataCollector {
 
         public Map<String, DebitCard> getDebitCards() {
             return debitCards;
+        }
+
+
+        public void addPowerOfAttorney(PowerOfAttorney powerOfAttorney) {
+            powerOfAttorneys.add(powerOfAttorney);
+        }
+
+        public boolean containsAccount(String accountIban) {
+
+            return accounts.containsKey(accountIban);
+        }
+
+        public Account getAccount(String accountIban) {
+
+            return accounts.get(accountIban);
+        }
+
+        public void addAccount(
+                String accountIban,
+                Account account) {
+
+            accounts.put(accountIban, account);
+        }
+
+        public boolean containsCreditCard(String cardId) {
+
+            return creditCards.containsKey(cardId);
+        }
+
+        public void addCreditCard(
+                String cardId,
+                CreditCard card) {
+
+            creditCards.put(cardId, card);
+        }
+
+        public boolean containsDebitCard(String cardId) {
+
+            return debitCards.containsKey(cardId);
+        }
+
+        public void addDebitCard(
+                String cardId,
+                DebitCard card) {
+
+            debitCards.put(cardId, card);
+        }
+
+        public boolean containsBlockedCard(String cardId) {
+
+            return blockedCards.contains(cardId);
+        }
+
+        public void addBlockedCard(String cardId) {
+
+            blockedCards.add(cardId);
         }
     }
 }

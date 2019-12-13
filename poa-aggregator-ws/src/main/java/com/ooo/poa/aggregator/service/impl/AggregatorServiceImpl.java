@@ -18,9 +18,9 @@ public class AggregatorServiceImpl implements AggregatorService {
 
 
 	@Override
-	public List<PowerOfAttorneyAggr> getPowerOfAttorneys() {
+	public List<PowerOfAttorneyAggr> getPowerOfAttorneys(String user) {
 
-	    CollectedData data = dataCollector.collect();
+	    CollectedData data = dataCollector.collectFor(user);
 
 		return dataAggregator.aggregate(
 		        data.getPowerOfAttorneys(),

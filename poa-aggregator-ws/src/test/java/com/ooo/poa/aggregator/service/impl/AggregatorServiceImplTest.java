@@ -1,11 +1,11 @@
 package com.ooo.poa.aggregator.service.impl;
 
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +18,6 @@ import com.ooo.poa.aggregator.service.AggregatorService;
 import com.ooo.poa.aggregator.service.PoaClient;
 import com.ooo.poa.aggregator.service.impl.DataCollector.CollectedData;
 import com.ooo.poa.aggregator.ws.model.PowerOfAttorneyAggr;
-import com.ooo.poa.client.model.Account;
-import com.ooo.poa.client.model.CreditCard;
-import com.ooo.poa.client.model.DebitCard;
-import com.ooo.poa.client.model.PowerOfAttorney;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AggregatorServiceImplTest {
@@ -64,19 +60,15 @@ public class AggregatorServiceImplTest {
     @Test
 	@SuppressWarnings("unchecked")
 	public void getPowerOfAttorneys() {
-	    List<PowerOfAttorney> powerOfAttorneys = mock(List.class);
-	    Map<String, Account> accounts = mock(Map.class);
-	    Map<String, CreditCard> creditCards = mock(Map.class);
-	    Map<String, DebitCard> debitCards = mock(Map.class);
-	    CollectedData data = new CollectedData(powerOfAttorneys, accounts, creditCards, debitCards);
+	    CollectedData data = new CollectedData();
 	    List<PowerOfAttorneyAggr> aggregated = mock(List.class);
 
-	    when(dataCollector.collect())
+	    when(dataCollector.collectFor(anyString()))
 	            .thenReturn(data);
-	    when(dataAggregator.aggregate(powerOfAttorneys, accounts, creditCards, debitCards))
+	    when(dataAggregator.aggregate(data.getPowerOfAttorneys(), data.getAccounts(), data.getCreditCards(), data.getDebitCards()))
 	            .thenReturn(aggregated);
 
 
-	    assertSame(aggregated, service.getPowerOfAttorneys());
+	    assertSame(aggregated, service.getPowerOfAttorneys("string"));
 	}
 }

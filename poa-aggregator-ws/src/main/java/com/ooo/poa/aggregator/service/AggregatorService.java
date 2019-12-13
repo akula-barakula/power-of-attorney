@@ -6,5 +6,5 @@ import com.ooo.poa.aggregator.ws.model.PowerOfAttorneyAggr;
 
 public interface AggregatorService {
 
-	List<PowerOfAttorneyAggr> getPowerOfAttorneys();
+	List<PowerOfAttorneyAggr> getPowerOfAttorneys(String user);
 }
