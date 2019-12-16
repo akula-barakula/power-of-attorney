@@ -7,7 +7,7 @@ public class DebitCardAggr {
 	private Integer sequenceNumber;
 	private String cardHolder;
 
-	private StatusAggr status;
+	private CardStatusAggr status;
 	private LimitAggr atmLimit;
 	private LimitAggr posLimit;
 	private Boolean contactless;
@@ -45,11 +45,11 @@ public class DebitCardAggr {
 		return cardHolder;
 	}
 
-    public void setStatus(StatusAggr status) {
+    public void setStatus(CardStatusAggr status) {
         this.status = status;
     }
 
-    public StatusAggr getStatus() {
+    public CardStatusAggr getStatus() {
         return status;
     }
 

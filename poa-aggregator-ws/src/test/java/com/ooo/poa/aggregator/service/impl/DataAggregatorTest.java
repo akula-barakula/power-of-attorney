@@ -19,7 +19,7 @@ import com.ooo.poa.aggregator.ws.model.DirectionAggr;
 import com.ooo.poa.aggregator.ws.model.ModelTest;
 import com.ooo.poa.aggregator.ws.model.PeriodUnitAggr;
 import com.ooo.poa.aggregator.ws.model.PowerOfAttorneyAggr;
-import com.ooo.poa.aggregator.ws.model.StatusAggr;
+import com.ooo.poa.aggregator.ws.model.CardStatusAggr;
 import com.ooo.poa.client.model.Account;
 import com.ooo.poa.client.model.CardType;
 import com.ooo.poa.client.model.CreditCard;
@@ -90,7 +90,7 @@ public class DataAggregatorTest extends ModelTest {
         assertEquals(Integer.valueOf(10), creditCardAggr.getCardNumber());
         assertEquals(Integer.valueOf(5), creditCardAggr.getSequenceNumber());
         assertEquals("Card Holder", creditCardAggr.getCardHolder());
-        assertSame(StatusAggr.ACTIVE, creditCardAggr.getStatus());
+        assertSame(CardStatusAggr.ACTIVE, creditCardAggr.getStatus());
         assertEquals(Integer.valueOf(100), creditCardAggr.getMonhtlyLimit());
 
         assertEquals(1, poaAggr.getDebitCards().size());
@@ -99,7 +99,7 @@ public class DataAggregatorTest extends ModelTest {
         assertEquals(Integer.valueOf(11), debitCardAggr.getCardNumber());
         assertEquals(Integer.valueOf(6), debitCardAggr.getSequenceNumber());
         assertEquals("Card Holder 2", debitCardAggr.getCardHolder());
-        assertSame(StatusAggr.ACTIVE, debitCardAggr.getStatus());
+        assertSame(CardStatusAggr.ACTIVE, debitCardAggr.getStatus());
         assertEquals(Integer.valueOf(20), debitCardAggr.getAtmLimit().getLimit());
         assertSame(PeriodUnitAggr.DAY, debitCardAggr.getAtmLimit().getPeriodUnit());
         assertEquals(Integer.valueOf(50), debitCardAggr.getPosLimit().getLimit());

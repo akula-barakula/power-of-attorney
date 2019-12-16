@@ -1,6 +1,6 @@
 package com.ooo.poa.aggregator.ws.model;
 
-public enum StatusAggr {
+public enum CardStatusAggr {
 
 	ACTIVE,
 	BLOCKED;

@@ -105,7 +105,6 @@ public class AggregatorApplicationConfig {
         }
 
         private void adjustObjectMapper(ObjectMapper objectMapper) {
-
             objectMapper.setSerializationInclusion(Include.NON_EMPTY);
         }
     }

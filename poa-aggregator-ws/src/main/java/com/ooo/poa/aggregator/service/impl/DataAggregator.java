@@ -14,7 +14,7 @@ import com.ooo.poa.aggregator.ws.model.DirectionAggr;
 import com.ooo.poa.aggregator.ws.model.LimitAggr;
 import com.ooo.poa.aggregator.ws.model.PeriodUnitAggr;
 import com.ooo.poa.aggregator.ws.model.PowerOfAttorneyAggr;
-import com.ooo.poa.aggregator.ws.model.StatusAggr;
+import com.ooo.poa.aggregator.ws.model.CardStatusAggr;
 import com.ooo.poa.client.model.Account;
 import com.ooo.poa.client.model.Authorization;
 import com.ooo.poa.client.model.CardReference;
@@ -120,7 +120,7 @@ public class DataAggregator {
         CreditCardAggr result = new CreditCardAggr();
 
         result.setId(creditCard.getId());
-        result.setStatus(toStatusAggr(creditCard.getStatus()));
+        result.setStatus(toCardStatusAggr(creditCard.getStatus()));
         result.setCardNumber(creditCard.getCardNumber());
         result.setSequenceNumber(creditCard.getSequenceNumber());
         result.setCardHolder(creditCard.getCardHolder());
@@ -154,7 +154,7 @@ public class DataAggregator {
         DebitCardAggr result = new DebitCardAggr();
 
         result.setId(debitCard.getId());
-        result.setStatus(toStatusAggr(debitCard.getStatus()));
+        result.setStatus(toCardStatusAggr(debitCard.getStatus()));
         result.setCardNumber(debitCard.getCardNumber());
         result.setSequenceNumber(debitCard.getSequenceNumber());
         result.setCardHolder(debitCard.getCardHolder());
@@ -231,14 +231,14 @@ public class DataAggregator {
         }
     }
 
-    private StatusAggr toStatusAggr(Status status) {
+    private CardStatusAggr toCardStatusAggr(Status status) {
 
         switch (status) {
         case ACTIVE:
-            return StatusAggr.ACTIVE;
+            return CardStatusAggr.ACTIVE;
 
         case BLOCKED:
-            return StatusAggr.BLOCKED;
+            return CardStatusAggr.BLOCKED;
 
         default:
             return null;

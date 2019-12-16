@@ -7,7 +7,7 @@ public class CreditCardAggr {
 	private Integer sequenceNumber;
 	private String cardHolder;
 
-	private StatusAggr status;
+	private CardStatusAggr status;
 	private Integer monhtlyLimit;
 
 
@@ -43,11 +43,11 @@ public class CreditCardAggr {
 	    return cardHolder;
 	}
 
-	public void setStatus(StatusAggr status) {
+	public void setStatus(CardStatusAggr status) {
 		this.status = status;
 	}
 
-	public StatusAggr getStatus() {
+	public CardStatusAggr getStatus() {
 		return status;
 	}
 
